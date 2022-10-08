@@ -1,12 +1,19 @@
-import { AiFillFacebook, AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
+import { AiFillFacebook, AiFillSetting, AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
+import { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
+// toastify : toast nofication
+import { toast } from 'react-toastify';
+
 import images from '../../assets/images/images';
-import { auth } from '../../firebase/config';
+import { auth, db } from '../../firebase/config';
 import firebase from '../../firebase/config';
+import ToastMessage from '../../components/ToastMessage';
+import addDocument from '../../firebase/service';
 
 function SignIn() {
+    const inputRef = useRef();
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -16,6 +23,11 @@ function SignIn() {
         onSubmit: (values) => {
             // Phải đúng yêu cầu validate như dưới mới submit được
             console.log(values);
+            // khi submit thì hiện ra thông báo là tính năng đã đóng vui lòng đăng nhập với FB or Google :
+            if (values) {
+                handleNotify();
+            }
+            inputRef.current.value = '';
         },
 
         validationSchema: Yup.object({
@@ -31,18 +43,59 @@ function SignIn() {
         }),
     });
 
-    console.log(formik.errors);
+    // console.log(formik.errors);
 
     // handle sigin in with facebooka and google with firebase :
     const fbProvider = new firebase.auth.FacebookAuthProvider();
-    const handleFbLogin = () => {
-        auth.signInWithPopup(fbProvider);
+    const handleFbLogin = async () => {
+        const data = await auth.signInWithPopup(fbProvider);
+        console.log({ data });
     };
     // handle google login :
     const GGProvider = new firebase.auth.GoogleAuthProvider();
-    const handleGoogleLogin = () => {
-        auth.signInWithPopup(GGProvider);
+    // auth.signInWithPopup sẽ trả ra 1 Promise nên dùng hàm async để làm
+    const handleGoogleLogin = async () => {
+        // Lấy ra user và additionalUserInfo từ Promise trả về :
+        // const data = await auth.signInWithPopup(GGProvider);
+        // console.log({ data });
+        const { user, additionalUserInfo } = await auth.signInWithPopup(GGProvider);
+
+        // khi nếu là khoản là isNewUser thì thêm lưu vào đó 1 collection (tương tự bảng trong SQL)
+        if (additionalUserInfo.isNewUser) {
+            /*
+            db.collection('users').add({
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                uid: user.displayName,
+                providerID: additionalUserInfo.providerId,
+            });
+            */
+            // đưa collection ra cấu hình riêng để tái sử dụng được ở nhiều nơi khác : tạo file service
+            addDocument('users', {
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                uid: user.displayName,
+                providerID: additionalUserInfo.providerId,
+            });
+        }
     };
+
+    // handle notify :
+    const handleNotify = () => {
+        ToastMessage('closed');
+    };
+
+    // useEffect(() => {
+    //     db.collection('users').onSnapshot((snapshot) => {
+    //         const data = snapshot.docs.map((doc) => ({
+    //             ...doc.data(),
+    //             id: doc.id,
+    //         }));
+    //         console.log({ data, snapshot, docs: snapshot.docs });
+    //     });
+    // }, []);
 
     return (
         <div className="">
@@ -52,8 +105,22 @@ function SignIn() {
                     <h1 className="text-[20px] uppercase">Join with us</h1>
                     <p className="text-[13px] text-[#99a7b0] my-[15px]">
                         Don't have an account?
-                        <span className=" ml-[5px] font-semibold text-primary cursor-pointer">Create an account</span>
+                        <span className=" ml-[5px] font-semibold text-primary cursor-pointer" onClick={handleNotify}>
+                            Create an account
+                        </span>
                     </p>
+                    {/* <ToastContainer
+                        // bodyClassName={'bg-red-400 p-0'}
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}`
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                    /> */}
                     <form onSubmit={formik.handleSubmit}>
                         <label className="text-[13px]" htmlFor="email">
                             Email address
@@ -68,6 +135,7 @@ function SignIn() {
                                 placeholder="Your email"
                                 value={formik.values.email}
                                 onChange={formik.handleChange}
+                                ref={inputRef}
                             ></input>
                             {formik.errors.email && (
                                 <span className="absolute top-[110%] left-0 text-[13px] text-primary">
@@ -88,6 +156,7 @@ function SignIn() {
                                 placeholder="Your password"
                                 value={formik.values.password}
                                 onChange={formik.handleChange}
+                                ref={inputRef}
                             ></input>
                             {formik.errors.password && (
                                 <span className="absolute top-[110%] left-0 text-[13px] text-primary">

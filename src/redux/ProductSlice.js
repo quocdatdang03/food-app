@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
+const pathFilterFromLocalStorage = JSON.parse(localStorage.getItem('pathProduct'));
 const productSlice = createSlice({
     name: 'product',
     initialState: {
         viewLayoutProduct: 'grid',
-        pathProduct: 'best-foods',
+        pathProduct: pathFilterFromLocalStorage || 'best-foods',
         priceFilter: '',
         rateFilter: null,
         inputSearchValue: '',
+        activeInfoProduct: 'description',
     },
 
     reducers: {
@@ -30,9 +32,19 @@ const productSlice = createSlice({
             const inputValue = action.payload;
             state.inputSearchValue = inputValue;
         },
+        setActiveInfoProduct: (state, action) => {
+            const infoProduct = action.payload;
+            state.activeInfoProduct = infoProduct;
+        },
     },
 });
 
-export const { setViewlayoutProduct, setpathProduct, FilterPrice, FilterRate, setInputSearchValue } =
-    productSlice.actions;
+export const {
+    setViewlayoutProduct,
+    setpathProduct,
+    FilterPrice,
+    FilterRate,
+    setInputSearchValue,
+    setActiveInfoProduct,
+} = productSlice.actions;
 export default productSlice.reducer;

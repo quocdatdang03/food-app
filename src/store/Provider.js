@@ -1,8 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-import Context from './Context';
-import { auth } from '../firebase/config';
+import { Context } from './Context';
 
 function Provider({ children }) {
     const [showCart, setShowCart] = useState(false);
@@ -10,30 +8,23 @@ function Provider({ children }) {
     const [showModal, setShowModal] = useState(false);
     const [foodData, setFoodData] = useState([]);
     const [filterProductData, setFilterProductData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [showBtnScrollTop, setShowBtnScrollTop] = useState(false);
 
-    // Xử lý login / signIn :
-    const navigate = useNavigate();
-    // const location = useLocation();
-    const { pathname } = useLocation();
-    const pathNameSignIn = '/signin';
-    console.log(pathname);
-    // dùng location.pathname hoặd lấy pathname ra bằng destructuring : const { pathname } = useLocation();
-    const [user, setUser] = useState(null);
     useEffect(() => {
-        const unSubscribed = auth.onAuthStateChanged((user) => {
-            if (user) {
-                const { displayName, email, photoURL } = user;
-                setUser({ displayName, email, photoURL });
-
-                // Nếu đường dẫn hiện tại là /signin thì chuyển hướng đến trang home'
-                if (pathname.includes(pathNameSignIn)) {
-                    navigate('/');
-                }
+        const scrollButtonToTop = () => {
+            if (document.body.scrollTop > 700 || document.documentElement.scrollTop > 700) {
+                setShowBtnScrollTop(true);
+            } else {
+                setShowBtnScrollTop(false);
             }
-        });
+        };
+
+        window.addEventListener('scroll', scrollButtonToTop);
+
         // clean up function :
-        return () => unSubscribed;
-    }, []);
+        return () => window.removeEventListener('scroll', scrollButtonToTop);
+    }, [showBtnScrollTop]);
     return (
         <Context.Provider
             value={{
@@ -43,12 +34,13 @@ function Provider({ children }) {
                 setShowNav,
                 filterProductData,
                 setFilterProductData,
+                loading,
+                setLoading,
                 foodData,
                 setFoodData,
                 showModal,
                 setShowModal,
-                user,
-                setUser,
+                showBtnScrollTop,
             }}
         >
             {children}

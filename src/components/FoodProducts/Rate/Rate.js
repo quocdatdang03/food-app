@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useContext } from 'react';
 
 import { FilterRate } from '../../../redux/ProductSlice';
-import Context from '../../../store/Context';
+import { Context } from '../../../store/Context';
 
 const starRate = [
     {
@@ -18,13 +18,17 @@ const starRate = [
 ];
 
 function Rate() {
-    const { setFilterProductData, foodData } = useContext(Context);
+    const { setLoading, setFilterProductData, foodData } = useContext(Context);
     const filterRate = useSelector((state) => state.product.rateFilter);
     const dispatch = useDispatch();
     // handle Filter rate :
     const handleRateFilter = (currentRate) => {
-        const action = FilterRate(currentRate);
-        dispatch(action);
+        setLoading(true);
+        setTimeout(() => {
+            const action = FilterRate(currentRate);
+            dispatch(action);
+            setLoading(false);
+        }, [200]);
     };
 
     useEffect(() => {

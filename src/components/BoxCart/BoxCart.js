@@ -9,8 +9,8 @@ import { useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import images from '../../assets/images/images';
-import Context from '../../store/Context';
-import { addToCart, deleteFromCart, removeFromCart } from '../../redux/CartSlice';
+import { Context } from '../../store/Context';
+import { addToCart, deleteFromCart, increaseProduct, decreaseProduct } from '../../redux/CartSlice';
 
 function BoxCart() {
     const listCart = useSelector((state) => state.cart.listCart);
@@ -22,14 +22,18 @@ function BoxCart() {
         setShowCart(false);
     };
 
-    // handle add to cart :
-    const handleAddToCart = (currentProduct) => {
-        const action = addToCart(currentProduct);
+    // // handle add to cart :
+    // const handleAddToCart = (currentProduct) => {
+    //     const action = addToCart(currentProduct);
+    //     dispatch(action);
+    // };
+    const handleInreaseProduct = (currentItem) => {
+        const action = increaseProduct(currentItem);
         dispatch(action);
     };
     // handle remove from cart :
-    const handleremoveFromCart = (currentItem) => {
-        const action = removeFromCart(currentItem);
+    const handledecreaseProduct = (currentItem) => {
+        const action = decreaseProduct(currentItem);
         dispatch(action);
     };
     // handle delete from cart :
@@ -79,11 +83,11 @@ function BoxCart() {
                                         <h2 className="font-semibold">{item.name}</h2>
                                         <p className="my-[9px] text-primary font-bold">${item.price}</p>
                                         <div className="flex items-center">
-                                            <button className="btn-cart" onClick={() => handleremoveFromCart(item)}>
+                                            <button className="btn-cart" onClick={() => handledecreaseProduct(item)}>
                                                 <RiSubtractLine />
                                             </button>
                                             <span className="px-[10px]">{item.quantity}</span>
-                                            <button className="btn-cart" onClick={() => handleAddToCart(item)}>
+                                            <button className="btn-cart" onClick={() => handleInreaseProduct(item)}>
                                                 <AiOutlinePlus />
                                             </button>
                                         </div>

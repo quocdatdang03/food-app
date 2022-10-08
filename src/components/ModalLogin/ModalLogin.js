@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Context from '../../store/Context';
+import { Context } from '../../store/Context';
 
 function ModalLogin() {
     const { showModal, setShowModal } = useContext(Context);

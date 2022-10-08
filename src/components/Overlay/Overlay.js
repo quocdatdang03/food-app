@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import Context from '../../store/Context';
+import { Context } from '../../store/Context';
 
 function OverLay() {
     const { setShowCart, setShowNav, setShowModal, showNav, showCart, showModal, user } = useContext(Context);

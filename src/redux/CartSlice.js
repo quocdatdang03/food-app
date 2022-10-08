@@ -13,13 +13,19 @@ const cartSlice = createSlice({
         addToCart: (state, action) => {
             const existIndex = state.listCart.findIndex((item) => item.id === action.payload.id);
             if (existIndex >= 0) {
-                state.listCart[existIndex].quantity += 1;
+                state.listCart[existIndex].quantity += state.quantityProduct;
             } else {
                 state.listCart = [...state.listCart, { ...action.payload, quantity: state.quantityProduct }];
             }
         },
 
-        removeFromCart: (state, action) => {
+        increaseProduct: (state, action) => {
+            const existIndex = state.listCart.findIndex((item) => item.id === action.payload.id);
+            // vì khi addToCart đã có quantity trong đó nên ta . được đến key quantity ở đây
+            state.listCart[existIndex].quantity += 1;
+        },
+
+        decreaseProduct: (state, action) => {
             const existIndex = state.listCart.findIndex((item) => item.id === action.payload.id);
             if (state.listCart[existIndex].quantity === 1) {
                 state.listCart = state.listCart.filter((item) => item.id !== action.payload.id);
@@ -60,6 +66,14 @@ const cartSlice = createSlice({
     },
 });
 
-export const { addToCart, removeFromCart, deleteFromCart, getTotal, inCrease, deCrease, resetQuantity } =
-    cartSlice.actions;
+export const {
+    addToCart,
+    increaseProduct,
+    decreaseProduct,
+    deleteFromCart,
+    getTotal,
+    inCrease,
+    deCrease,
+    resetQuantity,
+} = cartSlice.actions;
 export default cartSlice.reducer;

@@ -19,12 +19,13 @@ import MenuSideBarItem from './MenuSideBarItem';
 import PriceInputRadio from './PriceInputRadio';
 import Rate from './Rate';
 import { request } from '../../utils/request';
-import { setViewlayoutProduct, FilterPrice, setInputSearchValue } from '../../redux/ProductSlice';
+import { setViewlayoutProduct, FilterPrice, setInputSearchValue, setpathProduct } from '../../redux/ProductSlice';
 import { addToCart, resetQuantity } from '../../redux/CartSlice';
 import '../../sass/FoodProduct.scss';
-import Context from '../../store/Context';
+import { AuthContext, Context } from '../../store/Context';
 import images from '../../assets/images/images';
 import Spinner from '../Spinner/Spinner';
+import ToastMessage from '../ToastMessage';
 
 const menuSideBar = [
     {
@@ -81,11 +82,23 @@ function FoodProduct() {
     const filterPrice = useSelector((state) => state.product.priceFilter);
     const filterRate = useSelector((state) => state.product.rateFilter);
     const inputValueSearch = useSelector((state) => state.product.inputSearchValue);
-    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
-    const { filterProductData, setFilterProductData, foodData, setFoodData, user, showModal, setShowModal } =
-        useContext(Context);
+    const {
+        filterProductData,
+        setFilterProductData,
+        foodData,
+        setFoodData,
+        showModal,
+        setShowModal,
+        loading,
+        setLoading,
+    } = useContext(Context);
+    const { user } = useContext(AuthContext);
     useEffect(() => {
+        window.addEventListener('DOMContentLoaded', () => {
+            dispatch(setpathProduct('best-foods'));
+        });
+        localStorage.setItem('pathProduct', JSON.stringify(pathProductFilter));
         setLoading(true);
         const fetchApi = async () => {
             try {
@@ -113,8 +126,12 @@ function FoodProduct() {
 
     // handle Filter By Price :
     const handleFilterByPrice = (currentPrice) => {
-        const action = FilterPrice(currentPrice);
-        dispatch(action);
+        setLoading(true);
+        setTimeout(() => {
+            const action = FilterPrice(currentPrice);
+            dispatch(action);
+            setLoading(false);
+        }, [200]);
     };
     useEffect(() => {
         const filterProduct = foodData.filter((item) => {
@@ -224,7 +241,7 @@ function FoodProduct() {
     const handleAddToCart = (e, currentProduct) => {
         e.stopPropagation();
         const action = addToCart(currentProduct);
-        user && !showModal ? dispatch(action) : setShowModal(true);
+        user && !showModal ? dispatch(action) && ToastMessage('success') : setShowModal(true);
     };
 
     // handle reset Quantity : Xử lý khi quay lại trang này thì cho quantity về lại bằng 1 :

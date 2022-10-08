@@ -13,6 +13,7 @@
 @layer base {
   html , body {
     font-family: 'Roboto', sans-serif;
+    scroll-behavior : smooth;
   }
 
   body {
@@ -47,5 +48,9 @@
 
   .btn-modal {
     @apply uppercase font-medium text-[13px] py-[6px] px-[10px] ease-linear duration-200;
+  }
+
+  .btn-desc-and-review {
+    @apply text-[19px] mx-[10px] py-[12px] px-[20px] font-bold rounded-[10px];
   }
 }

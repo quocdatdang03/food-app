@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 
 import 'firebase/analytics';
 import 'firebase/auth';
+import 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: 'AIzaSyDN06AZJ8TcsW5e5rGWs-DtvOgQBEwcolI',
@@ -19,6 +20,8 @@ firebase.analytics();
 
 //  auth : xác thực
 const auth = firebase.auth();
+// firestore : lưu trữ
+const db = firebase.firestore();
 
-export { auth };
+export { auth, db };
 export default firebase;

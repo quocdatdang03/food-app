@@ -10,7 +10,7 @@ import Nav from '../../../components/Nav';
 import NavMobile from '../../../components/NavMobile';
 import BoxCart from '../../../components/BoxCart/BoxCart';
 import OverLay from '../../../components/Overlay/Overlay';
-import Context from '../../../store/Context';
+import { AuthContext, Context } from '../../../store/Context';
 import { getTotal } from '../../../redux/CartSlice';
 import { auth } from '../../../firebase/config';
 import ModalLogin from '../../../components/ModalLogin';
@@ -34,11 +34,11 @@ const navData = [
 ];
 function Header() {
     const navigate = useNavigate();
-    const { user, setUser, showModal, setShowModal } = useContext(Context);
     const dispatch = useDispatch();
     const totalQuantity = useSelector((state) => state.cart.totalQuantity);
     const [headerActive, setHeaderActive] = useState();
-    const { showCart, setShowCart, showNav, setShowNav } = useContext(Context);
+    const { showCart, setShowCart, showNav, setShowNav, showModal, setShowModal } = useContext(Context);
+    const { user, setUser } = useContext(AuthContext);
     // handle header when scroll :
     useEffect(() => {
         const scrollHeader = () => {
@@ -99,7 +99,6 @@ function Header() {
                 headerActive ? 'bg-[rgba(0,0,0,0.80)] mt-0' : 'bg-transparent mt-[5px]'
             } ease-out duration-200`}
         >
-            {!user && <ModalLogin />}
             <div className="max-w-primary w-full h-[72px] px-[24px] flex items-center justify-between">
                 <button className="block md:hidden">
                     <FontAwesomeIcon icon={faBars} className="text-[28px] text-white" onClick={handleShowNav} />

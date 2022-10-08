@@ -20,6 +20,7 @@ import foodCategory8 from '../food-category-8.svg';
 import foodCategory9 from '../food-category-9.svg';
 import emptyProduct from '../empty-product.svg';
 import iconGoogle from '../google-img.svg';
+import checkoutError from '../checkout-error.svg';
 
 const images = {
     logo: logo,
@@ -44,6 +45,7 @@ const images = {
     foodCategory9: foodCategory9,
     emptyProduct: emptyProduct,
     iconGoogle: iconGoogle,
+    checkoutError: checkoutError,
 };
 
 export default images;

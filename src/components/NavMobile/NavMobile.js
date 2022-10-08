@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext } from 'react';
 
-import Context from '../../store/Context';
+import { Context } from '../../store/Context';
 
 function NavMobile({ to, icon, title }) {
     const { setShowNav } = useContext(Context);

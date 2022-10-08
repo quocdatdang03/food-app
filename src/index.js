@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import ProviderContext from './store/Provider';
+import AuthProvider from './store/AuthProvider';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { BrowserRouter as Router } from 'react-router-dom';
@@ -13,13 +14,14 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Router>
         <ProviderContext>
-            <Provider store={store}>
-                <React.StrictMode>
-                    <App />
-                </React.StrictMode>
-            </Provider>
+            <AuthProvider>
+                <Provider store={store}>
+                    <React.StrictMode>
+                        <App />
+                    </React.StrictMode>
+                </Provider>
+            </AuthProvider>
         </ProviderContext>
-        ,
     </Router>,
 );
 
